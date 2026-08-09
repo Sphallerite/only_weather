@@ -1,0 +1,101 @@
+:root {
+    --dark-mode-base: rgb(25, 26, 29);
+    --light-mode-base: rgb(236, 236, 236);
+
+    --pad: 10px;
+    --gap: 8px;
+    --marg: 20px;
+
+    --primary-widget-height: 200px;
+    --secondary-widget-height: 100px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+    background-color: var(--dark-mode-base);
+    color:rgb(255, 255, 255);
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+}
+
+.top-container {
+    padding-left: var(--gap);
+    padding-right: var(--gap);
+}
+
+.item {
+    margin-top: var(--gap);
+    margin-bottom: var(--gap);
+}
+
+.button {
+    width: 30px;
+    height: 30px;
+    padding: 0px;
+    background-color: rgb(79, 98, 107)
+}
+
+.search-form {
+    display: flex;
+}
+
+#search-container {
+    margin-left: auto;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+}
+
+#searchbox {
+    width: 400px;
+    height: 30px;
+    max-width: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+}
+
+.site-container {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.widget-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+#main-widget {
+    width: 300px;
+    max-width: 100%;
+    outline: 1px solid rgb(21, 39, 44);
+    aspect-ratio: 1;
+}
+
+#graph-widget {
+    width: 600px;
+    max-width: 100%;
+    outline: 1px solid rgb(21, 39, 44);
+    aspect-ratio: 2;
+}
+
+.day-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 150px);
+    justify-content: center;
+}
+
+.day {
+    height: 150px;
+    aspect-ratio: 1;
+    outline: 1px solid rgb(21, 39, 44);
+}
