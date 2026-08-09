@@ -1,13 +1,51 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Just the Weather" />
-    <title>Just The Weather</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <h1>Just the Weather</h1>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Just the Weather" />
+  <title>Just The Weather</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <div class="site-container">
+    <header>
+      <div class="container top-container">
+        <button class="button item" type="button">
+          <div class="text-icon">°F</div>
+        </button>
+        <button class="button item" type="button">
+          <img class="icon" src="assets/icons/dark-mode.svg" alt="">
+        </button>
+        <form role="search" class="container" id="search-container">
+          <input class="item" id="searchbox" type="search" placeholder="Search City...">
+          <button class="button item" type="submit">
+            <img class="icon" src="assets/icons/search.svg" alt="">
+          </button>
+        </form>
+      </div>
+    </header>
+    <main>
+      <div class="widget-container">
+        <div id="main-widget">MAIN</div>
+        <div id="graph-widget">GRAPH</div>
+      </div>
+      <div class="day-grid">
+        <div class="day" id="day1">DAY1</div>
+        <div class="day" id="day2">DAY2</div>
+        <div class="day" id="day3">DAY3</div>
+        <div class="day" id="day4">DAY4</div>
+        <div class="day" id="day5">DAY5</div>
+        <div class="day" id="day6">DAY6</div>
+        <div class="day" id="day7">DAY7</div>
+      </div>
+    </main>
+    <footer>
+      <div class="container"></div>
+    </footer>
+  </div>
+</body>
+
 </html>
