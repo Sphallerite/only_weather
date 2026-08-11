@@ -4,6 +4,7 @@ for location {
 for hour from now to +7 days {
 temperature
 dew point
+humidity
 apparent temperature
 cloud cover
 wind speed
@@ -14,7 +15,6 @@ snowfall
 rainfall
 precipitation probability
 weather code
-current snow depth
 visibility
 }
 }
