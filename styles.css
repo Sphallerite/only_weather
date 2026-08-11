@@ -1,15 +1,17 @@
 :root {
-  --dark-mode-base: rgb(25, 26, 29);
-  --light-mode-base: rgb(236, 236, 236);
+  --dark-mode-base: rgb(23, 23, 24);
+  --weather-blue: rgb(83, 107, 123);
+  --weather-white: rgb(213, 218, 225);
 
   --gap: 10px;
 
   --max-site-size: 1200px;
-  --wig-unit--size: 150;
 }
 
 * {
   box-sizing: border-box;
+  border-radius: 10px;
+  margin: 0.5vh;
 }
 
 body {
@@ -37,7 +39,7 @@ body {
   width: 30px;
   aspect-ratio: 1;
   padding: 0px;
-  background-color: rgb(79, 98, 107);
+  background-color: var(--weather-blue);
   flex-shrink: 0;
 }
 
@@ -68,26 +70,20 @@ body {
 }
 
 .widget-container {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
+  display: grid;
+  aspect-ratio: 4/1;
+  grid-template-columns: 1fr minmax(0, 2fr);
 }
 
 #main-widget {
-  width: 450px;
-  max-width: 100%;
-  aspect-ratio: 1;
-  margin: 5px;
-  background-color: cadetblue;
-}
+  min-width: 300px;
 
+  background-color: var(--weather-blue);
+}
 #graph-widget {
-  width: 750px;
-  max-width: 100%;
-  outline: 1px solid rgb(21, 39, 44);
-  aspect-ratio: 8 / 5;
-  margin: 5px;
-  background-color: brown;
+  min-width: 300px;
+
+  background-color: var(--weather-white);
 }
 
 .day-container {
@@ -98,26 +94,72 @@ body {
 }
 
 .day {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px;
+
   aspect-ratio: 1;
-  margin: 5px;
-  background-color: chocolate;
+  background-color: var(--weather-blue);
+  font-size: 2cqw;
+  container-type: size;
+  font-family: calibri;
+  font-weight: bold;
 }
 
-@media all and (max-width: 600px) {
-  .day-container {
-    grid-template-columns: repeat(4, 1fr);
-  }
+.day-icon {
+  width: 40cqw;
+  height: 40cqw;
+  display: block;
+  flex: 1 1 0;
 }
 
-@media all and (max-width: 420px) {
+.day-item-date {
+  color: var(--weather-white);
+  display: block;
+  text-wrap: nowrap;
+  flex: 5 1 0;
+}
+
+.day-item-temp {
+  color: var(--weather-white);
+  display: block;
+  text-wrap: nowrap;
+  flex: 1 1 0;
+  text-align: right;
+}
+
+@media all and (max-width: 650px) {
   .widget-container {
-    flex-wrap: wrap;
+    grid-template-columns: 1fr;
+    aspect-ratio: 1 / 1;
   }
+  #main-widget {
+    min-width: 0px;
+  }
+  #graph-widget {
+    min-width: 0px;
+  }
+
   .day-container {
     grid-template-columns: repeat(1, 1fr);
   }
   .day {
-    aspect-ratio: 0;
-    height: 30px;
+    padding-left: 3cqw;
+    padding-right: 3cqw;
+    aspect-ratio: 8 / 1;
+    font-size: 5cqw;
+    align-items: center;
+    container-type: size;
   }
+  .day-icon {
+    width: 60cqh;
+    height: 60cqh;
+  }
+}
+
+/* TEMP */
+
+.img-text {
+  display: flex;
+  align-items: center;
 }
