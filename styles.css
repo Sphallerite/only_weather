@@ -1,46 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 :root {
-  --dark-mode-base: rgb(23, 23, 24);
-  --weather-blue: rgb(83, 107, 123);
-  --weather-white: rgb(213, 218, 225);
-
-  --gap: 10px;
+  --base: #181a1a;
+  --dark: #505556;
+  --mild: #727677;
+  --light: #e0eaed;
+  --highlight: #fbfbfb;
 
   --max-site-size: 1200px;
+
+  --gap: 10px;
+  --border-radius: 8px;
 }
 
 * {
+  outline: 1px solid rgba(255, 0, 0, 0);
   box-sizing: border-box;
-  border-radius: 10px;
-  margin: 0.5vh;
+}
+
+html {
+  font-family: "Roboto Mono";
 }
 
 body {
-  background-color: var(--dark-mode-base);
-  color: rgb(255, 255, 255);
+  background-color: var(--base);
+  color: var(--light);
 }
 
 .container {
   display: flex;
-  align-items: center;
   gap: var(--gap);
-}
-
-.top-container {
-  padding-left: var(--gap);
-  padding-right: var(--gap);
-}
-
-.item {
-  margin-top: var(--gap);
   margin-bottom: var(--gap);
 }
 
 .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   width: 30px;
-  aspect-ratio: 1;
+  height: 30px;
   padding: 0px;
-  background-color: var(--weather-blue);
+
   flex-shrink: 0;
+
+  color: var(--light);
+  background-color: var(--dark);
+
+  border: none;
+
+  border-radius: var(--border-radius);
+
+  cursor: pointer;
+
+  font-size: 100%;
+  font-weight: bold;
+
+  transition: background-color 0.2s ease;
+  transition: scale 0.05s ease;
+}
+
+.button:hover {
+  background-color: var(--mild);
+  scale: 1.1;
+}
+
+.button:active {
+  transform: scale(0.9);
 }
 
 .search-form {
@@ -53,10 +78,26 @@ body {
   max-width: 1fr;
 }
 
+#searchbox::placeholder {
+  color: var(--highlight);
+  font-family: inherit;
+}
+
 #searchbox {
   width: 100%;
   height: 30px;
-  max-width: 400px;
+
+  color: var(--dark);
+  background-color: var(--dark);
+  border-radius: var(--border-radius);
+
+  border: none;
+
+  transition: scale 0.05s ease;
+}
+
+#searchbox:hover {
+  scale: 1.02;
 }
 
 body {
@@ -73,17 +114,21 @@ body {
   display: grid;
   aspect-ratio: 4/1;
   grid-template-columns: 1fr minmax(0, 2fr);
+  gap: var(--gap);
+  margin-bottom: var(--gap);
 }
 
 #main-widget {
   min-width: 300px;
 
-  background-color: var(--weather-blue);
+  background-color: var(--dark);
+  border-radius: var(--border-radius);
 }
 #graph-widget {
   min-width: 300px;
 
-  background-color: var(--weather-white);
+  background-color: var(--dark);
+  border-radius: var(--border-radius);
 }
 
 .day-container {
@@ -91,40 +136,71 @@ body {
   width: 1200;
   max-width: 100%;
   grid-template-columns: repeat(8, 1fr);
+
+  gap: var(--gap);
 }
 
 .day {
-  display: flex;
-  justify-content: space-between;
-  padding: 3px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  align-items: center;
+
+  padding: 10%;
 
   aspect-ratio: 1;
-  background-color: var(--weather-blue);
-  font-size: 2cqw;
   container-type: size;
-  font-family: calibri;
-  font-weight: bold;
+
+  font-size: 2.1cqw;
+  font-weight: 500;
+
+  background-color: var(--dark);
+  border-radius: var(--border-radius);
 }
 
 .day-icon {
-  width: 40cqw;
-  height: 40cqw;
   display: block;
   flex: 1 1 0;
+
+  width: 50cqh;
+  aspect-ratio: 1;
 }
 
 .day-item-date {
-  color: var(--weather-white);
-  display: block;
+  text-align: left;
+  color: var(--light);
   text-wrap: nowrap;
+  display: block;
   flex: 5 1 0;
+
+  font-size: 120%;
+
+  margin-right: auto;
+  margin-bottom: auto;
 }
 
-.day-item-temp {
-  color: var(--weather-white);
+.day-temp {
+  color: var(--light);
+
   display: block;
-  text-wrap: nowrap;
   flex: 1 1 0;
+
+  font-size: 80%;
+
+  text-wrap: nowrap;
+}
+
+.lo {
+  margin-right: auto;
+  margin-top: auto;
+
+  text-align: left;
+}
+
+.hi {
+  margin-left: auto;
+  margin-top: auto;
+
   text-align: right;
 }
 
@@ -144,6 +220,11 @@ body {
     grid-template-columns: repeat(1, 1fr);
   }
   .day {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 0;
+
     padding-left: 3cqw;
     padding-right: 3cqw;
     aspect-ratio: 8 / 1;
@@ -154,6 +235,29 @@ body {
   .day-icon {
     width: 60cqh;
     height: 60cqh;
+    margin-left: inherit;
+    margin-bottom: inherit;
+  }
+  .day-item-temp {
+    text-align: right;
+    font-size: inherit;
+  }
+  .day-item-date {
+    font-size: inherit;
+    text-align: left;
+
+    margin-right: inherit;
+    margin-bottom: inherit;
+  }
+
+  .lo {
+    text-align: center;
+    margin-left: inherit;
+    margin-top: inherit;
+  }
+  .hi {
+    margin-left: inherit;
+    margin-top: inherit;
   }
 }
 
@@ -162,4 +266,18 @@ body {
 .img-text {
   display: flex;
   align-items: center;
+}
+
+.clouds {
+  object-fit: cover;
+  filter: grayscale(100%) brightness(50%);
+  width: 100%;
+  height: 300px;
+  object-position: 50% 60%;
+}
+
+.stupid {
+  margin-top: var(--gap);
+  border: var(--gap) solid var(--dark);
+  border-radius: var(--border-radius);
 }
