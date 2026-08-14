@@ -19,7 +19,7 @@
             class="button item glow-shadow"
             type="button"
           >
-            <div class="button-text">°F</div>
+            <div class="button-text">F</div>
           </button>
           <button class="button item glow-shadow" type="button">
             <img class="icon" src="assets/icons/dark-mode.svg" alt="" />
@@ -41,11 +41,31 @@
         <div class="widget-container">
           <div class="card glow-shadow" id="main-widget">
             <div class="auto-pad-main-widget">
-              <div>
+              <div class="temp-and-location">
                 <div class="location">Port Orange, FL</div>
-                <div class="temp">52°</div>
+                <div class="temperatures">
+                  <div class="temp">52°</div>
+                  <div class="feels-block">
+                    <div class="feels">Feels</div>
+                    <div class="feels-temp">48°</div>
+                  </div>
+                </div>
               </div>
               <img class="emoji" src="assets/icons/weather/rainy.svg" alt="" />
+              <div class="info-block">
+                <div class="info-text" id="percipitation">
+                  <div class="info-name">Percipitation</div>
+                  <div class="info">90%</div>
+                </div>
+                <div class="info-text" id="humidity">
+                  <div class="info-name">Dew Point</div>
+                  <div class="info">72°</div>
+                </div>
+                <div class="info-text" id="wind">
+                  <div class="info-name">Wind</div>
+                  <div class="info">3 mph</div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="card glow-shadow" id="graph-widget"></div>
