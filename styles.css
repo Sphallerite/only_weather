@@ -1,9 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 :root {
-  --base-grad-one: #928a7c;
-  --base-grad-two: #91cfef;
+  --base-grad-one: #997f53;
+  --base-grad-two: #7bc4e3;
   --dark: #000000;
-  --light-transparent: #00000048;
+  --light-transparent: #00000050;
   --dark-transparent: #000000bb;
   --mild: #adadad79;
   --light: #e7e7e7;
@@ -12,7 +12,7 @@
   --max-site-size: 1200px;
 
   --gap: 8px;
-  --border-radius: 5px;
+  --border-radius: 12px;
 }
 
 * {
@@ -22,7 +22,7 @@
 
 html {
   font-family: "Inter", sans-serif;
-  font-weight: 200;
+  font-weight: 250;
   min-height: 100%;
   background: linear-gradient(
     to bottom,
@@ -42,9 +42,11 @@ body {
   border-radius: var(--border-radius);
   background-color: var(--light-transparent);
 
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-
   container-type: size;
+}
+
+.glow-shadow {
+  box-shadow: 0px 0px 4px 1px var(--light-transparent);
 }
 
 .container {
@@ -66,19 +68,17 @@ body {
 
   border: none;
 
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-
   color: var(--light);
   background-color: var(--light-transparent);
 
-  border-radius: 2px;
+  border-radius: var(--border-radius);
 
   cursor: pointer;
 
   font-family: inherit;
   font-weight: inherit;
 
-  transition: scale 0.05s ease-in;
+  transition: scale 0.01s ease-in;
 }
 
 .button-text {
@@ -90,7 +90,7 @@ body {
 }
 
 .button:active {
-  transform: scale(0.9);
+  scale: 0.9;
 }
 
 .search-form {
@@ -123,12 +123,12 @@ body {
   height: 30px;
 
   font-family: inherit;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: inherit;
   color: var(--light);
 
   background-color: var(--light-transparent);
-  border-radius: 20px;
+  border-radius: var(--border-radius);
 
   border: none;
 
@@ -205,22 +205,22 @@ body {
 
   align-content: space-evenly;
 
-  padding: 5%;
+  padding: 10%;
 
   aspect-ratio: 1;
   container-type: size;
 
   font-size: 2cqw;
 
-  transition: scale 0.05s ease-in;
+  transition: scale 0.02s ease-in;
 }
 
 .day:hover {
-  scale: 0.95;
+  scale: 0.975;
 }
 
 .day:active {
-  scale: 0.9;
+  scale: 0.95;
 }
 
 .day-icon {
@@ -236,7 +236,7 @@ body {
   display: block;
   flex: 5 1 0;
 
-  font-size: 25cqh;
+  font-size: 20cqh;
 }
 
 .day-temp {
@@ -268,7 +268,7 @@ body {
     display: flex;
     justify-content: space-between;
 
-    padding: 1.5cqw;
+    padding: 1cqw 4cqw;
     aspect-ratio: 8 / 1;
     font-size: 4cqw;
     align-items: center;
@@ -276,25 +276,27 @@ body {
   }
 
   .day-icon {
-    width: 60cqh;
-    height: 60cqh;
+    flex: 1 1 0;
+    width: 80cqh;
+    height: 80cqh;
     margin-left: inherit;
     margin-bottom: inherit;
   }
   .day-item-temp {
+    flex: 1 1 0;
     text-align: right;
     font-size: inherit;
   }
   .day-item-date {
+    flex: 4 1 0;
     font-size: inherit;
     text-align: left;
 
     margin-right: inherit;
-    margin-bottom: auto;
+    margin-bottom: inherit;
   }
 
   .lo {
-    text-align: center;
     margin-left: inherit;
     margin-top: inherit;
   }
