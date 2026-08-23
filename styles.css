@@ -1,11 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 :root {
-  --weather-grad-top: #79c1e8;
-  --weather-grad-bottom: #cd9b5f;
+  --weather-grad-top: #429fd5;
+  --weather-grad-bottom: #c5b58f;
 
   --black: #000000;
-  --black-trans: #00000050;
-  --grey: #adadad79;
+  --black-trans: #00000039;
+  --grey: #adadad72;
   --grey-contrast: #353535;
   --white: #ffffff;
   --white-trans: #ffffff72;
@@ -45,19 +45,21 @@
   --text-xxb: 3rem;
 
   /* TEXT WEIGHT */
-  --xlight: 200;
+  --xlight: 150;
   --light: 300;
   --medium: 400;
-  --heavy: 600;
+  --heavy: 500;
+  --xheavy: 600;
 
   /* ICON SIZE */
-  --icon-m: 1.5rem;
+  --icon-s: 1.5rem;
+  --icon-m: 2.8rem;
   --icon-l: 3.6rem;
   --icon-xl: 5rem;
 
   /* BORDER RADIUS */
-  --radius-s: 12px;
-  --radius-l: 16px;
+  --radius-s: 4px;
+  --radius-l: 8px;
 }
 
 * {
@@ -78,6 +80,7 @@ html {
 
 body {
   color: var(--white);
+  margin-top: var(--space-m);
 }
 
 .card {
@@ -127,13 +130,13 @@ body {
 }
 
 .button-text {
-  font-size: var(--text-l);
+  font-size: 18px;
   font-weight: var(--light);
 }
 
 .icon {
-  width: var(--icon-m);
-  height: var(--icon-m);
+  width: 24px;
+  height: 24px;
 }
 
 .button:hover {
@@ -233,11 +236,12 @@ body {
   grid-column: span 2;
   font-size: var(--text-m);
   margin-bottom: var(--space-xs);
+  font-weight: var(--light);
 }
 
 .date {
   grid-column: span 2;
-  font-size: var(--text-s);
+  font-size: var(--text-xs);
   font-weight: var(--light);
 }
 
@@ -251,7 +255,7 @@ hr {
 
 .temp {
   font-size: var(--text-xxb);
-  font-weight: var(--medium);
+  font-weight: var(--heavy);
 }
 
 .temperatures {
@@ -286,6 +290,7 @@ hr {
 
 .feels-temp {
   align-self: center;
+  font-weight: var(--heavy);
 }
 
 .emoji {
@@ -324,7 +329,8 @@ hr {
   display: flex;
   width: 100%;
   max-width: var(--fixed-container-size);
-  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  column-wrap: wrap;
 
   gap: var(--gap-s);
 }
@@ -332,11 +338,11 @@ hr {
 .day {
   flex: 1 1 0;
   display: grid;
-  grid-template-columns: auto auto;
-  grid-template-rows: auto auto;
+  grid-template-columns: auto;
+  aspect-ratio: 1;
 
   align-content: space-evenly;
-  justify-content: space-evenly;
+  justify-items: center;
 
   gap: var(--space-s);
   padding: var(--space-s);
@@ -355,13 +361,11 @@ hr {
 }
 
 .day-icon {
-  width: var(--text-b);
-  height: var(--text-b);
+  width: var(--icon-m);
+  height: var(--icon-m);
 }
 
 .day-item-date {
-  grid-column: span 2;
-
   font-size: var(--text-m);
   font-weight: var(--light);
 
@@ -369,12 +373,13 @@ hr {
 }
 
 .day-temp {
+  grid-column: span 2;
   color: var(--white);
 
   display: block;
 
   font-size: var(--text-m);
-  font-weight: var(--medium);
+  font-weight: var(--heavy);
 
   text-wrap: nowrap;
   text-align: center;
@@ -398,14 +403,11 @@ hr {
     display: flex;
     justify-content: space-between;
 
+    aspect-ratio: auto;
+
     padding: var(--space-xs) var(--space-m);
     font-size: var(--text-m);
     align-items: center;
-  }
-
-  .hilo {
-    display: flex;
-    gap: var(--space-m);
   }
 
   .day-icon {
