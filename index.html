@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
 
-  <script src="js/script.js" defer></script>
-
   <body>
     <div class="page-wrapper">
       <header>
@@ -20,9 +18,6 @@
             type="button"
           >
             <div class="button-text">F</div>
-          </button>
-          <button class="button item glow-shadow" type="button">
-            <img class="icon" src="assets/icons/dark-mode.svg" alt="" />
           </button>
           <form role="search" class="container" id="search-container">
             <input
@@ -40,31 +35,31 @@
       <main>
         <div class="widget-container">
           <div class="card glow-shadow" id="main-widget">
-            <div class="auto-pad-main-widget">
-              <div class="temp-and-location">
-                <div class="location">Port Orange, FL</div>
-                <div class="temperatures">
-                  <div class="temp">52°</div>
-                  <div class="feels-block">
-                    <div class="feels">Feels</div>
-                    <div class="feels-temp">48°</div>
-                  </div>
+            <div class="location">Rancho Santa Margarita, CA</div>
+            <div class="date">Today</div>
+            <hr />
+            <div class="temperatures">
+              <div class="temp">°</div>
+              <div class="feels-block">
+                <div class="feels-block-2">
+                  <div class="feels">Feels</div>
+                  <div class="feels-temp">°</div>
                 </div>
               </div>
-              <img class="emoji" src="assets/icons/weather/rainy.svg" alt="" />
-              <div class="info-block">
-                <div class="info-text" id="percipitation">
-                  <div class="info-name">Percipitation</div>
-                  <div class="info">90%</div>
-                </div>
-                <div class="info-text" id="humidity">
-                  <div class="info-name">Dew Point</div>
-                  <div class="info">72°</div>
-                </div>
-                <div class="info-text" id="wind">
-                  <div class="info-name">Wind</div>
-                  <div class="info">3 mph</div>
-                </div>
+            </div>
+            <img class="emoji" src="assets/icons/weather/sunny.svg" alt="" />
+            <div class="info-block">
+              <div class="info-text" id="percipitation-info">
+                <div class="info-name">Percipitation</div>
+                <div class="info" id="perc">%</div>
+              </div>
+              <div class="info-text" id="humidity-info">
+                <div class="info-name">Humidity</div>
+                <div class="info" id="humidity">%</div>
+              </div>
+              <div class="info-text" id="wind-info">
+                <div class="info-name">Wind</div>
+                <div class="info" id="wind">mph</div>
               </div>
             </div>
           </div>
@@ -72,77 +67,77 @@
         </div>
         <div class="day-container">
           <button class="day card glow-shadow" id="day0" type="button">
-            <div class="day-item-date">Fri 24</div>
+            <div class="day-item-date">Today</div>
             <img
               class="day-icon"
               src="assets/icons/weather/partly-cloudy.svg"
               alt=""
             />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day1" type="button">
-            <div class="day-item-date">Sat 25</div>
+            <div class="day-item-date">Sat 15</div>
             <img class="day-icon" src="assets/icons/weather/rainy.svg" alt="" />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day2" type="button">
-            <div class="day-item-date">Sun 26</div>
+            <div class="day-item-date">Sun 16</div>
             <img class="day-icon" src="assets/icons/weather/rainy.svg" alt="" />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day3" type="button">
-            <div class="day-item-date">Mon 27</div>
+            <div class="day-item-date">Mon 17</div>
             <img class="day-icon" src="assets/icons/weather/sunny.svg" alt="" />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day4" type="button">
-            <div class="day-item-date">Tue 28</div>
+            <div class="day-item-date">Tue 18</div>
             <img
               class="day-icon"
               src="assets/icons/weather/cloudy.svg"
               alt=""
             />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day5" type="button">
-            <div class="day-item-date">Wed 29</div>
+            <div class="day-item-date">Wed 19</div>
             <img class="day-icon" src="assets/icons/weather/sunny.svg" alt="" />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day6" type="button">
-            <div class="day-item-date">Thu 30</div>
+            <div class="day-item-date">Thu 20</div>
             <img class="day-icon" src="assets/icons/weather/sunny.svg" alt="" />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day7" type="button">
-            <div class="day-item-date">Fri 31</div>
+            <div class="day-item-date">Fri 21</div>
             <img
               class="day-icon"
               src="assets/icons/weather/thunderstorm.svg"
               alt=""
             />
-            <div>
+            <div class="hilo">
               <div class="day-temp hi">68°H</div>
               <div class="day-temp lo">52°L</div>
             </div>
@@ -158,4 +153,6 @@
       </footer>
     </div>
   </body>
+
+  <script type="module" src="js/main.js"></script>
 </html>
