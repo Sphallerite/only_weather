@@ -18,9 +18,6 @@ const elements = {
 const city = "Milford, Massachusetts";
 
 const location = city_to_coords(city);
-+location.then((city) => {
-  console.log(city);
-});
 
 location.then((locations) => {
   return get_weather(
@@ -28,11 +25,12 @@ location.then((locations) => {
     locations.results[0].longitude,
   ).then((weather_data) => {
     update_main_widget(
-      weather_data,
+      weather_data.current,
       locations.results[0].name +
         ", " +
         abbreviate_state(locations.results[0].admin1),
     );
+    update_day_widgets(weather_data.daily);
   });
 });
 
@@ -45,25 +43,41 @@ elements.tempUnitButton.addEventListener("click", () => {
 });
 
 function update_main_widget(weather_data, location_name) {
-  console.log(weather_data);
-
   elements.mainLocation.textContent = location_name;
 
   elements.mainTemp.textContent =
-    Math.round(Number(weather_data.current.temperature_2m)) + "°";
+    Math.round(Number(weather_data.temperature_2m)) + "°";
   elements.mainfeelsTemp.textContent =
-    Math.round(Number(weather_data.current.apparent_temperature)) + "°";
+    Math.round(Number(weather_data.apparent_temperature)) + "°";
 
   elements.mainPrecipitation.textContent =
-    Math.round(Number(weather_data.current.precipitation)) + "%";
-  elements.mainHumidity.textContent =
-    weather_data.current.relative_humidity_2m + "%";
+    Math.round(Number(weather_data.precipitation)) + "%";
+  elements.mainHumidity.textContent = weather_data.relative_humidity_2m + "%";
   elements.mainWind.textContent =
-    Math.round(Number(weather_data.current.wind_speed_10m)) + " mph";
+    Math.round(Number(weather_data.wind_speed_10m)) + " mph";
   elements.mainEmoji.src = weather_code_to_emoji(
-    weather_data.current.weather_code,
-    weather_data.current.is_day,
+    weather_data.weather_code,
+    weather_data.is_day,
   );
+}
+
+function update_day_widgets(weather_data) {
+  for (let i = 0; i < 7; i++) {
+    const day = elements.days[i];
+
+    day.querySelector(".day-date").textContent = iso_to_date(
+      weather_data.time[i],
+    );
+
+    day.querySelector(".day-icon").src = weather_code_to_emoji(
+      weather_data.weather_code[i],
+      true,
+    );
+    day.querySelector(".hi").textContent =
+      Math.round(Number(weather_data.temperature_2m_max[i])) + "°H";
+    day.querySelector(".lo").textContent =
+      Math.round(Number(weather_data.temperature_2m_min[i])) + "°L";
+  }
 }
 
 async function get_weather(lat, long) {
@@ -80,7 +94,12 @@ async function get_weather(lat, long) {
       `wind_speed_10m,` +
       `is_day` +
       `&timezone=auto` +
-      `&daily=sunrise,sunset` +
+      `&daily=` +
+      `sunrise,` +
+      `sunset,` +
+      `weather_code,` +
+      `temperature_2m_max,` +
+      `temperature_2m_min` +
       `&wind_speed_unit=mph` +
       `&temperature_unit=fahrenheit`,
   );
@@ -217,4 +236,11 @@ function abbreviate_state(state) {
   };
 
   return stateAbbreviations[state];
+}
+
+function iso_to_date(iso_date) {
+  const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const segs = iso_date.split("-");
+  return names[new Date(iso_date).getDay()] + " " + String(Number(segs[2]));
 }

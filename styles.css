@@ -386,6 +386,11 @@ hr {
   text-align: center;
 }
 
+.hilo {
+  display: flex;
+  gap: var(--space-s);
+}
+
 @media all and (max-width: 650px) {
   .widget-container {
     display: grid;
@@ -427,7 +432,6 @@ hr {
 
   .hilo {
     display: flex;
-    flex-direction: row-reverse;
     margin-right: auto;
     gap: var(--space-s);
     flex: 1 1 0;
