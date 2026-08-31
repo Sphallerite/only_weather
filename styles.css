@@ -109,7 +109,7 @@ body {
   justify-content: center;
   align-items: center;
 
-  width: 24px;
+  width: 28px;
   aspect-ratio: 1;
 
   flex-shrink: 0;
@@ -152,7 +152,7 @@ body {
   align-items: center;
 }
 
-#search-container {
+#searchbar {
   margin-left: auto;
   flex-wrap: nowrap;
   max-width: 100%;
@@ -174,7 +174,7 @@ body {
 
 #searchbox {
   width: 100%;
-  height: 24px;
+  height: 28px;
 
   font-family: inherit;
   font-size: var(--text-s);
@@ -286,6 +286,7 @@ hr {
 .feels {
   font-size: var(--text-m);
   font-weight: var(--light);
+  margin-bottom: var(--space-xs);
 }
 
 .feels-temp {
@@ -365,7 +366,7 @@ hr {
   height: var(--icon-m);
 }
 
-.day-item-date {
+.day-date {
   font-size: var(--text-m);
   font-weight: var(--light);
 

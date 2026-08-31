@@ -1,0 +1,14 @@
+Data we need in one API call
+For one city (coords)
+    Today --- 8 days
+        Temp
+        Apparent Temp
+        Total percipitation
+        Humidity
+        Wind
+    Hourly
+        Temp
+        Apparent Temp
+        Total percipitation
+        Humidity
+        Wind
