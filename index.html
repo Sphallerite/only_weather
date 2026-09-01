@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Just the Weather" />
-    <title>Just The Weather</title>
+    <meta name="description" content="Only The Weather" />
+    <title>Only Weather</title>
     <link rel="stylesheet" href="styles.css" />
     <link
       rel="icon"
@@ -24,7 +24,12 @@
           >
             <div class="button-text" id="temp-unit-button-text">F</div>
           </button>
-          <form role="search" class="container" id="searchbar">
+          <form
+            role="search"
+            class="container search-container"
+            id="searchbar"
+            autocomplete="off"
+          >
             <input
               class="item glow-shadow"
               id="searchbox"
@@ -38,21 +43,34 @@
             >
               <img class="icon" src="assets/icons/search.svg" alt="" />
             </button>
+            <div
+              class="search-results-wrapper card glow-shadow hide"
+              id="search-results-wrapper"
+            >
+              <template
+                class="search-result-template"
+                id="search-result-template"
+              >
+                ><button type="button" class="search-result">
+                  <span class="city-name"></span>
+                </button>
+              </template>
+            </div>
           </form>
         </div>
       </header>
       <main>
         <div class="widget-container">
           <div class="card glow-shadow" id="main-widget">
-            <div class="location" id="main-location">Nowhere, NN</div>
-            <div class="date" id="main-date" hidden>Never</div>
+            <div class="location" id="main-location"></div>
+            <div class="date" id="main-date" hidden></div>
             <hr />
             <div class="temperatures">
-              <div class="temp" id="main-temp">0°</div>
+              <div class="temp" id="main-temp"></div>
               <div class="feels-block">
                 <div class="feels-block-2">
                   <div class="feels">Feels</div>
-                  <div class="feels-temp" id="feels-temp">0°</div>
+                  <div class="feels-temp" id="feels-temp"></div>
                 </div>
               </div>
             </div>
@@ -65,15 +83,15 @@
             <div class="info-block">
               <div class="info-text" id="percipitation-info">
                 <div class="info-name">Percipitation</div>
-                <div class="info" id="main-percipitation">0%</div>
+                <div class="info" id="main-percipitation"></div>
               </div>
               <div class="info-text" id="humidity-info">
                 <div class="info-name">Humidity</div>
-                <div class="info" id="main-humidity">0%</div>
+                <div class="info" id="main-humidity"></div>
               </div>
               <div class="info-text" id="wind-info">
                 <div class="info-name">Wind</div>
-                <div class="info" id="main-wind">0 mph</div>
+                <div class="info" id="main-wind"></div>
               </div>
             </div>
           </div>
@@ -81,59 +99,59 @@
         </div>
         <div class="day-container">
           <button class="day card glow-shadow" id="day0" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day1" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day2" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day3" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day4" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day5" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
           <button class="day card glow-shadow" id="day6" type="button">
-            <div class="day-date">Never</div>
+            <div class="day-date"></div>
             <img class="day-icon" src="assets/icons/unloaded.svg" alt="" />
             <div class="hilo">
-              <div class="day-temp lo">0°L</div>
-              <div class="day-temp hi">0°H</div>
+              <div class="day-temp lo"></div>
+              <div class="day-temp hi"></div>
             </div>
           </button>
         </div>

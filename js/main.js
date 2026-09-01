@@ -1,61 +1,152 @@
 const elements = {
-  tempUnitButton: document.getElementById("temp-unit-button"),
-  tempUnitButtonText: document.getElementById("temp-unit-button-text"),
+  temp_unit_button: document.getElementById("temp-unit-button"),
+  temp_unit_button_text: document.getElementById("temp-unit-button-text"),
   searchbar: document.getElementById("searchbar"),
   location: document.getElementById("location"),
-  mainLocation: document.getElementById("main-location"),
-  mainDate: document.getElementById("main-date"),
-  mainTemp: document.getElementById("main-temp"),
-  mainfeelsTemp: document.getElementById("feels-temp"),
-  mainEmoji: document.getElementById("main-emoji"),
-  mainPrecipitation: document.getElementById("main-percipitation"),
-  mainHumidity: document.getElementById("main-humidity"),
-  mainWind: document.getElementById("main-wind"),
+  main_location: document.getElementById("main-location"),
+  main_date: document.getElementById("main-date"),
+  main_temp: document.getElementById("main-temp"),
+  main_feels_temp: document.getElementById("feels-temp"),
+  main_emoji: document.getElementById("main-emoji"),
+  main_precipitation: document.getElementById("main-percipitation"),
+  main_humidity: document.getElementById("main-humidity"),
+  main_wind: document.getElementById("main-wind"),
 
   days: Array.from(document.querySelectorAll(".day")),
+
+  search_results_wrapper: document.getElementById("search-results-wrapper"),
+  search_result_template: document.getElementById("search-result-template"),
 };
 
-const city = "Milford, Massachusetts";
+const default_city = "Milford, Massachusetts";
 
-const location = city_to_coords(city);
-
-location.then((locations) => {
-  return get_weather(
-    locations.results[0].latitude,
-    locations.results[0].longitude,
-  ).then((weather_data) => {
-    update_main_widget(
-      weather_data.current,
-      locations.results[0].name +
-        ", " +
-        abbreviate_state(locations.results[0].admin1),
+fetch(
+  `https://geocoding-api.open-meteo.com/v1/search` +
+    `?name=${default_city}` +
+    `&count=1` +
+    `&language=en` +
+    `&format=json`,
+).then((response) =>
+  response.json().then((data) => {
+    const city = data.results[0];
+    update_location(
+      city.latitude,
+      city.longitude,
+      city.name + ", " + abbreviate_state(city.admin1),
     );
-    update_day_widgets(weather_data.daily);
-  });
-});
+  }),
+);
 
-elements.tempUnitButton.addEventListener("click", () => {
-  if (elements.tempUnitButtonText.textContent === "F") {
-    elements.tempUnitButtonText.textContent = "C";
+let controller;
+let cities = null;
+
+// EVENT LISTENERS
+
+elements.temp_unit_button.addEventListener("click", () => {
+  if (elements.temp_unit_button_text.textContent === "F") {
+    elements.temp_unit_button_text.textContent = "C";
   } else {
-    elements.tempUnitButtonText.textContent = "F";
+    elements.temp_unit_button_text.textContent = "F";
   }
 });
 
-function update_main_widget(weather_data, location_name) {
-  elements.mainLocation.textContent = location_name;
+elements.searchbar.addEventListener("input", async (event) => {
+  const input = event.target.value.trim();
 
-  elements.mainTemp.textContent =
+  elements.search_results_wrapper.innerHTML = "";
+
+  elements.search_results_wrapper.classList.remove("hide");
+
+  if (input.length < 2) {
+    return;
+  }
+
+  controller?.abort();
+  controller = new AbortController();
+
+  try {
+    const response = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search` +
+        `?name=${encodeURIComponent(input)}` +
+        `&count=10` +
+        `&language=en` +
+        `&format=json`,
+      { signal: controller.signal },
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    cities = await response.json();
+    console.log(cities);
+
+    for (const city of cities.results ?? []) {
+      const result_card =
+        elements.search_result_template.content.cloneNode(true).children[0];
+
+      const city_name = city.name + ", " + abbreviate_state(city.admin1);
+
+      result_card.addEventListener("click", () => {
+        update_location(city.latitude, city.longitude, city_name);
+        elements.search_results_wrapper.innerHTML = "";
+        elements.search_results_wrapper.classList.add("hide");
+        elements.searchbar.reset();
+      });
+
+      const city_name_text = result_card.querySelector(".city-name");
+
+      city_name_text.textContent = city_name;
+      elements.search_results_wrapper.append(result_card);
+    }
+  } catch (error) {
+    if (error.name !== "AbortError") {
+      console.error("Geocoding failed:", error);
+    }
+  }
+});
+
+elements.searchbar.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (cities != null) {
+    const city = cities.results[0];
+    const city_name = city.name + ", " + abbreviate_state(city.admin1);
+
+    update_location(city.latitude, city.longitude, city_name);
+    elements.search_results_wrapper.innerHTML = "";
+    elements.search_results_wrapper.classList.add("hide");
+    elements.searchbar.reset();
+  }
+});
+
+// DOM MANIPULATION
+
+async function update_location(lat, long, name) {
+  get_weather(lat, long).then((weather_data) => {
+    update_main_widget(weather_data.current, name);
+    update_day_widgets(weather_data.daily);
+  });
+}
+
+function update_main_widget(weather_data, location_name) {
+  elements.main_location.textContent = location_name;
+
+  elements.main_temp.textContent =
     Math.round(Number(weather_data.temperature_2m)) + "°";
-  elements.mainfeelsTemp.textContent =
+
+  elements.main_feels_temp.textContent =
     Math.round(Number(weather_data.apparent_temperature)) + "°";
 
-  elements.mainPrecipitation.textContent =
+  elements.main_precipitation.textContent =
     Math.round(Number(weather_data.precipitation)) + "%";
-  elements.mainHumidity.textContent = weather_data.relative_humidity_2m + "%";
-  elements.mainWind.textContent =
+
+  elements.main_humidity.textContent = weather_data.relative_humidity_2m + "%";
+
+  elements.main_wind.textContent =
     Math.round(Number(weather_data.wind_speed_10m)) + " mph";
-  elements.mainEmoji.src = weather_code_to_emoji(
+
+  elements.main_emoji.src = weather_code_to_emoji(
     weather_data.weather_code,
     weather_data.is_day,
   );
@@ -71,14 +162,18 @@ function update_day_widgets(weather_data) {
 
     day.querySelector(".day-icon").src = weather_code_to_emoji(
       weather_data.weather_code[i],
-      true,
+      true, // Daily emoji should always be day version
     );
     day.querySelector(".hi").textContent =
       Math.round(Number(weather_data.temperature_2m_max[i])) + "°H";
     day.querySelector(".lo").textContent =
       Math.round(Number(weather_data.temperature_2m_min[i])) + "°L";
   }
+
+  elements.days[0].querySelector(".day-date").textContent = "Today";
 }
+
+// FETCH
 
 async function get_weather(lat, long) {
   const response = await fetch(
@@ -106,16 +201,7 @@ async function get_weather(lat, long) {
   return response.json();
 }
 
-async function city_to_coords(city) {
-  const response = await fetch(
-    `https://geocoding-api.open-meteo.com/v1/search` +
-      `?name=${city}` +
-      `&count=10` +
-      `&language=en` +
-      `&format=json`,
-  );
-  return response.json();
-}
+// TRANFORMERS
 
 function weather_code_to_emoji(weatherCode, isDay) {
   let path = "assets/icons/weather/";
@@ -239,8 +325,8 @@ function abbreviate_state(state) {
 }
 
 function iso_to_date(iso_date) {
-  const names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const day_names = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   const segs = iso_date.split("-");
-  return names[new Date(iso_date).getDay()] + " " + String(Number(segs[2]));
+  return day_names[new Date(iso_date).getDay()] + " " + String(Number(segs[2]));
 }

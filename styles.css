@@ -5,6 +5,7 @@
 
   --black: #000000;
   --black-trans: #00000039;
+  --black-trans-xdark: #00000055;
   --grey: #adadad72;
   --grey-contrast: #353535;
   --white: #ffffff;
@@ -65,6 +66,7 @@
 * {
   outline: 1px solid rgba(255, 0, 0, 0);
   box-sizing: border-box;
+  user-select: none;
 }
 
 html {
@@ -145,6 +147,52 @@ body {
 
 .button:active {
   scale: 0.9;
+}
+
+.search-container {
+  position: relative;
+}
+
+.search-results-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  top: calc(100% + var(--space-s));
+  width: 100%;
+
+  background-color: rgb(0, 0, 0, 0);
+  backdrop-filter: blur(8px);
+}
+
+.search-result {
+  background-color: rgb(0, 0, 0, 0);
+  border: none;
+
+  width: fit-content;
+  height: calc(var(--text-m) + 2 * var(--space-s));
+
+  font-family: inherit;
+  color: var(--white);
+  font-weight: var(--light);
+  font-size: var(--text-s);
+  text-align: left;
+  width: 100%;
+  padding: 0;
+
+  transition: margin-left 0.05s ease-in;
+}
+
+.hide {
+  display: none;
+}
+
+.search-result:hover {
+  margin-left: 2px;
+}
+
+.city-name {
+  width: fit-content;
 }
 
 .search-form {
@@ -286,11 +334,11 @@ hr {
 .feels {
   font-size: var(--text-m);
   font-weight: var(--light);
-  margin-bottom: var(--space-xs);
+  margin-bottom: var(--space-xxs);
 }
 
 .feels-temp {
-  align-self: center;
+  text-align: center;
   font-weight: var(--heavy);
 }
 
