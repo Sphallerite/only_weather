@@ -16,6 +16,8 @@ const elements = {
 
   search_results_wrapper: document.getElementById("search-results-wrapper"),
   search_result_template: document.getElementById("search-result-template"),
+
+  loading_image_template: document.getElementById("loading-image-template"),
 };
 
 const default_city = "Milford, Massachusetts";
@@ -29,11 +31,7 @@ fetch(
 ).then((response) =>
   response.json().then((data) => {
     const city = data.results[0];
-    update_location(
-      city.latitude,
-      city.longitude,
-      city.name + ", " + abbreviate_state(city.admin1),
-    );
+    update_location(city.latitude, city.longitude, get_city_name(city));
   }),
 );
 
@@ -55,11 +53,16 @@ elements.searchbar.addEventListener("input", async (event) => {
 
   elements.search_results_wrapper.innerHTML = "";
 
-  elements.search_results_wrapper.classList.remove("hide");
+  elements.search_results_wrapper.classList.add("hide");
 
   if (input.length < 2) {
     return;
   }
+
+  elements.search_results_wrapper.classList.remove("hide");
+  elements.search_results_wrapper.append(
+    elements.loading_image_template.content.cloneNode(true).children[0],
+  );
 
   controller?.abort();
   controller = new AbortController();
@@ -82,10 +85,12 @@ elements.searchbar.addEventListener("input", async (event) => {
     console.log(cities);
 
     for (const city of cities.results ?? []) {
+      elements.search_results_wrapper.querySelector(".loading-image")?.remove();
+
       const result_card =
         elements.search_result_template.content.cloneNode(true).children[0];
 
-      const city_name = city.name + ", " + abbreviate_state(city.admin1);
+      const city_name = get_city_name(city);
 
       result_card.addEventListener("click", () => {
         update_location(city.latitude, city.longitude, city_name);
@@ -111,7 +116,7 @@ elements.searchbar.addEventListener("submit", (event) => {
 
   if (cities != null) {
     const city = cities.results[0];
-    const city_name = city.name + ", " + abbreviate_state(city.admin1);
+    const city_name = get_city_name(city);
 
     update_location(city.latitude, city.longitude, city_name);
     elements.search_results_wrapper.innerHTML = "";
@@ -297,26 +302,26 @@ function abbreviate_state(state) {
     Montana: "MT",
     Nebraska: "NE",
     Nevada: "NV",
-    NewHampshire: "NH",
-    NewJersey: "NJ",
-    NewMexico: "NM",
-    NewYork: "NY",
-    NorthCarolina: "NC",
-    NorthDakota: "ND",
+    "New Hampshire": "NH",
+    "New Jersey": "NJ",
+    "New Mexico": "NM",
+    "New York": "NY",
+    "North Carolina": "NC",
+    "North Dakota": "ND",
     Ohio: "OH",
     Oklahoma: "OK",
     Oregon: "OR",
     Pennsylvania: "PA",
-    RhodeIsland: "RI",
-    SouthCarolina: "SC",
-    SouthDakota: "SD",
+    "Rhode Island": "RI",
+    "South Carolina": "SC",
+    "South Dakota": "SD",
     Tennessee: "TN",
     Texas: "TX",
     Utah: "UT",
     Vermont: "VT",
     Virginia: "VA",
     Washington: "WA",
-    WestVirginia: "WV",
+    "West Virginia": "WV",
     Wisconsin: "WI",
     Wyoming: "WY",
   };
@@ -329,4 +334,12 @@ function iso_to_date(iso_date) {
 
   const segs = iso_date.split("-");
   return day_names[new Date(iso_date).getDay()] + " " + String(Number(segs[2]));
+}
+
+function get_city_name(city) {
+  if (city.country === "United States") {
+    return city.name + ", " + abbreviate_state(city.admin1);
+  } else {
+    return city.name + ", " + city.country;
+  }
 }

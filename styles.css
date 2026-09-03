@@ -157,12 +157,20 @@ body {
   display: flex;
   flex-direction: column;
 
+  padding: var(--space-s) var(--space-m);
+
   position: absolute;
   top: calc(100% + var(--space-s));
   width: 100%;
 
-  background-color: rgb(0, 0, 0, 0);
-  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px);
+}
+
+.loading-image {
+  width: var(--icon-l);
+  aspect-ratio: 1;
+  align-self: center;
 }
 
 .search-result {
