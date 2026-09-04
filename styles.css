@@ -5,7 +5,6 @@
 
   --black: #000000;
   --black-trans: #00000039;
-  --black-trans-xdark: #00000055;
   --grey: #adadad72;
   --grey-contrast: #353535;
   --white: #ffffff;
@@ -163,12 +162,12 @@ body {
   top: calc(100% + var(--space-s));
   width: 100%;
 
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--black-trans-dark);
   backdrop-filter: blur(6px);
 }
 
 .loading-image {
-  width: var(--icon-l);
+  width: var(--icon-s);
   aspect-ratio: 1;
   align-self: center;
 }
