@@ -22,6 +22,17 @@ const elements = {
 
 const default_city = "Milford, Massachusetts";
 
+let controller;
+let cities = null;
+
+let weather_data_metric = null;
+let weather_data_imperial = null;
+
+let location_name = null;
+let is_metric = false;
+
+let wind_unit_text = " kmh";
+
 let data = await fetch_and_validate(
   `https://geocoding-api.open-meteo.com/v1/search` +
     `?name=${default_city}` +
@@ -30,20 +41,23 @@ let data = await fetch_and_validate(
     `&format=json`,
 );
 const city = data.results[0];
-update_location(city.latitude, city.longitude, get_city_name(city));
-
-let controller;
-let cities = null;
-let weather_data = null;
+update_weather_data(city.latitude, city.longitude).then(() => {
+  update_all_widgets();
+});
+location_name = get_city_name(city);
 
 // EVENT LISTENERS
-
 elements.temp_unit_button.addEventListener("click", () => {
-  if (elements.temp_unit_button_text.textContent === "F") {
-    elements.temp_unit_button_text.textContent = "C";
-  } else {
+  if (is_metric) {
     elements.temp_unit_button_text.textContent = "F";
+    is_metric = false;
+    wind_unit_text = " mph";
+  } else {
+    elements.temp_unit_button_text.textContent = "C";
+    is_metric = true;
+    wind_unit_text = " kmh";
   }
+  update_all_widgets();
 });
 
 elements.searchbar.addEventListener("input", async (event) => {
@@ -75,18 +89,20 @@ elements.searchbar.addEventListener("input", async (event) => {
       controller.signal,
     );
 
-    console.log(cities);
-
     for (const city of cities.results ?? []) {
       elements.search_results_wrapper.querySelector(".loading-image")?.remove();
 
       const result_card =
         elements.search_result_template.content.cloneNode(true).children[0];
 
-      const city_name = get_city_name(city);
+      location_name = get_city_name(city);
 
       result_card.addEventListener("click", () => {
-        update_location(city.latitude, city.longitude, city_name);
+        update_weather_data(city.latitude, city.longitude).then(() => {
+          update_all_widgets();
+        });
+        location_name = get_city_name(city);
+
         elements.search_results_wrapper.innerHTML = "";
         elements.search_results_wrapper.classList.add("hide");
         elements.searchbar.reset();
@@ -94,7 +110,7 @@ elements.searchbar.addEventListener("input", async (event) => {
 
       const city_name_text = result_card.querySelector(".city-name");
 
-      city_name_text.textContent = city_name;
+      city_name_text.textContent = location_name;
       elements.search_results_wrapper.append(result_card);
     }
   } catch (error) {
@@ -105,14 +121,15 @@ elements.searchbar.addEventListener("input", async (event) => {
 });
 
 elements.searchbar.addEventListener("submit", (event) => {
-  console.log(cities);
   event.preventDefault();
 
   if (cities != null) {
     const city = cities.results[0];
-    const city_name = get_city_name(city);
+    update_weather_data(city.latitude, city.longitude).then(() => {
+      update_all_widgets();
+    });
+    location_name = get_city_name(city);
 
-    update_location(city.latitude, city.longitude, city_name);
     elements.search_results_wrapper.innerHTML = "";
     elements.search_results_wrapper.classList.add("hide");
     elements.searchbar.reset();
@@ -121,13 +138,25 @@ elements.searchbar.addEventListener("submit", (event) => {
 
 // DOM MANIPULATION
 
-async function update_location(lat, long, name) {
-  weather_data = await get_weather(lat, long);
-  update_main_widget(weather_data.current, name);
-  update_day_widgets(weather_data.daily);
+async function update_weather_data(lat, long) {
+  weather_data_metric = await get_weather(lat, long);
+
+  weather_data_imperial = metric_to_imperial(
+    structuredClone(weather_data_metric),
+  );
 }
 
-function update_main_widget(weather_data, location_name) {
+function update_all_widgets() {
+  if (is_metric) {
+    update_main_widget(weather_data_metric.current);
+    update_day_widgets(weather_data_metric.daily);
+  } else {
+    update_main_widget(weather_data_imperial.current);
+    update_day_widgets(weather_data_imperial.daily);
+  }
+}
+
+function update_main_widget(weather_data) {
   elements.main_location.textContent = location_name;
 
   elements.main_temp.textContent =
@@ -142,7 +171,7 @@ function update_main_widget(weather_data, location_name) {
   elements.main_humidity.textContent = weather_data.relative_humidity_2m + "%";
 
   elements.main_wind.textContent =
-    Math.round(Number(weather_data.wind_speed_10m)) + " mph";
+    Math.round(Number(weather_data.wind_speed_10m)) + wind_unit_text;
 
   elements.main_emoji.src = weather_code_to_emoji(
     weather_data.weather_code,
@@ -202,9 +231,7 @@ async function get_weather(lat, long) {
       `sunset,` +
       `weather_code,` +
       `temperature_2m_max,` +
-      `temperature_2m_min` +
-      `&wind_speed_unit=mph` +
-      `&temperature_unit=fahrenheit`,
+      `temperature_2m_min`,
   );
 
   return weather_data;
@@ -346,4 +373,32 @@ function get_city_name(city) {
   } else {
     return city.name + ", " + city.country;
   }
+}
+
+function metric_to_imperial(weather_data) {
+  weather_data.current.temperature_2m = c_to_f(
+    weather_data.current.temperature_2m,
+  );
+  weather_data.current.apparent_temperature = c_to_f(
+    weather_data.current.apparent_temperature,
+  );
+  weather_data.current.wind_speed_10m = kmh_to_mph(
+    weather_data.current.wind_speed_10m,
+  );
+
+  weather_data.daily.temperature_2m_max =
+    weather_data.daily.temperature_2m_max.map(c_to_f);
+
+  weather_data.daily.temperature_2m_min =
+    weather_data.daily.temperature_2m_min.map(c_to_f);
+
+  return weather_data;
+}
+
+function kmh_to_mph(kmh) {
+  return kmh / 1.609344;
+}
+
+function c_to_f(c) {
+  return c * (9 / 5) + 32;
 }
