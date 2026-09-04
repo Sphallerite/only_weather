@@ -8,7 +8,10 @@
 
   --black: #000000;
   --black-trans: #00000039;
+<<<<<<< HEAD
   --black-trans-xdark: #0000005f;
+=======
+>>>>>>> b9fbaaa30af4e6173899d8021c3d136288c773a5
   --grey: #adadad72;
   --grey-contrast: #353535;
   --white: #ffffff;
@@ -166,7 +169,11 @@ body {
   top: calc(100% + var(--space-s));
   width: 100%;
 
+<<<<<<< HEAD
   background-color: var(--black-trans-xdark);
+=======
+  background-color: var(--black-trans-dark);
+>>>>>>> b9fbaaa30af4e6173899d8021c3d136288c773a5
   backdrop-filter: blur(6px);
 }
 
