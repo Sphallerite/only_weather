@@ -22,21 +22,19 @@ const elements = {
 
 const default_city = "Milford, Massachusetts";
 
-fetch(
+let data = await fetch_and_validate(
   `https://geocoding-api.open-meteo.com/v1/search` +
     `?name=${default_city}` +
     `&count=1` +
     `&language=en` +
     `&format=json`,
-).then((response) =>
-  response.json().then((data) => {
-    const city = data.results[0];
-    update_location(city.latitude, city.longitude, get_city_name(city));
-  }),
 );
+const city = data.results[0];
+update_location(city.latitude, city.longitude, get_city_name(city));
 
 let controller;
 let cities = null;
+let weather_data = null;
 
 // EVENT LISTENERS
 
@@ -68,20 +66,15 @@ elements.searchbar.addEventListener("input", async (event) => {
   controller = new AbortController();
 
   try {
-    const response = await fetch(
+    cities = await fetch_and_validate(
       `https://geocoding-api.open-meteo.com/v1/search` +
         `?name=${encodeURIComponent(input)}` +
         `&count=10` +
         `&language=en` +
         `&format=json`,
-      { signal: controller.signal },
+      controller.signal,
     );
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-
-    cities = await response.json();
     console.log(cities);
 
     for (const city of cities.results ?? []) {
@@ -112,6 +105,7 @@ elements.searchbar.addEventListener("input", async (event) => {
 });
 
 elements.searchbar.addEventListener("submit", (event) => {
+  console.log(cities);
   event.preventDefault();
 
   if (cities != null) {
@@ -128,10 +122,9 @@ elements.searchbar.addEventListener("submit", (event) => {
 // DOM MANIPULATION
 
 async function update_location(lat, long, name) {
-  get_weather(lat, long).then((weather_data) => {
-    update_main_widget(weather_data.current, name);
-    update_day_widgets(weather_data.daily);
-  });
+  weather_data = await get_weather(lat, long);
+  update_main_widget(weather_data.current, name);
+  update_day_widgets(weather_data.daily);
 }
 
 function update_main_widget(weather_data, location_name) {
@@ -180,11 +173,21 @@ function update_day_widgets(weather_data) {
 
 // FETCH
 
+async function fetch_and_validate(url, signal) {
+  const response = await fetch(url, { signal: signal });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
 async function get_weather(lat, long) {
-  const response = await fetch(
+  const weather_data = await fetch_and_validate(
     `https://api.open-meteo.com/v1/forecast` +
-      `?latitude=${lat}` +
-      `&longitude=${long}` +
+      `?latitude=${encodeURIComponent(lat)}` +
+      `&longitude=${encodeURIComponent(long)}` +
       `&current=` +
       `temperature_2m,` +
       `relative_humidity_2m,` +
@@ -203,7 +206,8 @@ async function get_weather(lat, long) {
       `&wind_speed_unit=mph` +
       `&temperature_unit=fahrenheit`,
   );
-  return response.json();
+
+  return weather_data;
 }
 
 // TRANFORMERS
