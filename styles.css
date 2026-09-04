@@ -1,10 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 :root {
-  --weather-grad-top: #429fd5;
-  --weather-grad-bottom: #c5b58f;
+  --weather-grad-top: #892aa8;
+  --weather-grad-bottom: #e69832;
 
   --black: #000000;
   --black-trans: #00000039;
+  --black-trans-xdark: #0000005f;
   --grey: #adadad72;
   --grey-contrast: #353535;
   --white: #ffffff;
@@ -162,7 +163,7 @@ body {
   top: calc(100% + var(--space-s));
   width: 100%;
 
-  background-color: var(--black-trans-dark);
+  background-color: var(--black-trans-xdark);
   backdrop-filter: blur(6px);
 }
 
@@ -471,34 +472,28 @@ hr {
     align-items: center;
   }
 
+  .day-icon-and-temps {
+    display: flex;
+    gap: var(--space-m);
+    margin-left: auto;
+  }
+
   .day-icon {
-    flex: 1 1 0;
     width: var(--icon-s);
     height: var(--icon-s);
-    margin-right: auto;
+    margin-left: auto;
+    aspect-ratio: 1;
   }
-  .day-item-temp {
-    text-align: right;
-  }
+
   .day-item-date {
     text-align: left;
-    flex: 99 0 0;
   }
 
   .hilo {
     display: flex;
-    margin-right: auto;
+    width: fit-content;
+    margin-left: auto;
     gap: var(--space-s);
-    flex: 1 1 0;
-  }
-
-  .lo {
-    margin-left: inherit;
-    margin-top: inherit;
-  }
-  .hi {
-    margin-left: inherit;
-    margin-top: inherit;
   }
 }
 
