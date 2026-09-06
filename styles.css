@@ -1,17 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap");
 :root {
   --weather-grad-top: #62abdb;
+  --subtle: color-mix(in srgb, var(--weather-grad-top) 50%, rgb(255, 255, 255));
   --weather-grad-bottom: #beb19f;
 
   --bluey: #90c4d9;
 
   --black: #000000;
   --black-trans: #00000039;
-<<<<<<< HEAD
   --black-trans-xdark: #0000005f;
-=======
->>>>>>> b9fbaaa30af4e6173899d8021c3d136288c773a5
   --grey: #adadad72;
   --grey-contrast: #353535;
   --white: #ffffff;
@@ -163,17 +160,15 @@ body {
   display: flex;
   flex-direction: column;
 
+  z-index: 1;
+
   padding: var(--space-s) var(--space-m);
 
   position: absolute;
   top: calc(100% + var(--space-s));
   width: 100%;
 
-<<<<<<< HEAD
   background-color: var(--black-trans-xdark);
-=======
-  background-color: var(--black-trans-dark);
->>>>>>> b9fbaaa30af4e6173899d8021c3d136288c773a5
   backdrop-filter: blur(6px);
 }
 
@@ -292,7 +287,7 @@ body {
 
   display: grid;
   grid-template-columns: max-content minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) max-content;
+  grid-template-rows: max-content minmax(0, 1fr) max-content;
   gap: var(--space-s);
 }
 
@@ -318,13 +313,14 @@ body {
 }
 
 .time-legend {
-  font-family: "Roboto Mono";
   padding: 0 10% 0 1%;
   height: fit-content;
   width: auto;
 }
 
 .bar-box {
+  position: relative;
+  z-index: 0;
   display: grid;
   grid-template-columns: repeat(24, 1fr);
   align-items: flex-end;
@@ -337,14 +333,36 @@ body {
   border-radius: var(--radius-s);
 }
 
+.graph-menu {
+  grid-column: span 2;
+  display: flex;
+  gap: var(--space-s);
+}
+
+.graph-menu-button {
+  background-color: transparent;
+  border: 0;
+  border-radius: var(--radius-s);
+  color: white;
+  font-family: inherit;
+  font-weight: var(--light);
+  height: 20px;
+
+  transition: scale 0.05s ease-in-out;
+}
+
+.graph-menu-button:hover {
+  scale: 0.98;
+}
+
+.graph-menu-button:active {
+  scale: 0.95;
+}
+
 .bar {
   flex: 1 1 0;
-  background-color: color-mix(
-    in srgb,
-    var(--weather-grad-top) 50%,
-    rgb(255, 255, 255)
-  );
-  height: 50%;
+  background-color: var(--subtle);
+  height: 80%;
   border-radius: 2px;
   box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.14);
 }
@@ -523,6 +541,7 @@ hr {
   #main-widget {
   }
   #graph-widget {
+    height: 160px;
   }
 
   .day-container {

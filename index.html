@@ -99,12 +99,26 @@
             </div>
           </div>
           <div class="card glow-shadow" id="graph-widget">
+            <div class="graph-menu">
+              <button
+                class="graph-menu-button glow-shadow"
+                id="temperature-graph-menu-button"
+              >
+                Temperature
+              </button>
+              <button
+                class="graph-menu-button glow-shadow"
+                id="precipitation-graph-menu-button"
+              >
+                Precipitation
+              </button>
+            </div>
             <div class="legend range-legend">
-              <span class="legend-text">100%</span>
-              <span class="legend-text">75%</span>
-              <span class="legend-text">50%</span>
-              <span class="legend-text">25%</span>
-              <span class="legend-text">0%</span>
+              <span class="legend-text" id="legend-text-100">100%</span>
+              <span class="legend-text" id="legend-text-75">75%</span>
+              <span class="legend-text" id="legend-text-50">50%</span>
+              <span class="legend-text" id="legend-text-25">25%</span>
+              <span class="legend-text" id="legend-text-0">0%</span>
             </div>
             <div class="bar-box glow-shadow">
               <div class="bar"></div>

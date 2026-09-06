@@ -18,9 +18,22 @@ const elements = {
   search_result_template: document.getElementById("search-result-template"),
 
   loading_image_template: document.getElementById("loading-image-template"),
+
+  bars: Array.from(document.querySelectorAll(".bar")),
+
+  temp_graph_button: document.getElementById("temperature-graph-menu-button"),
+  prec_graph_button: document.getElementById("precipitation-graph-menu-button"),
+
+  legend_100: document.getElementById("legend-text-100"),
+  legend_75: document.getElementById("legend-text-75"),
+  legend_50: document.getElementById("legend-text-50"),
+  legend_25: document.getElementById("legend-text-25"),
+  legend_0: document.getElementById("legend-text-0"),
 };
 
 const default_city = "Milford, Massachusetts";
+
+// GLOBAL STATE (YEAH, GLOBAL STATE 😬)
 
 let controller;
 let cities = null;
@@ -31,7 +44,11 @@ let weather_data_imperial = null;
 let location_name = null;
 let is_metric = false;
 
-let wind_unit_text = " kmh";
+let wind_unit_text = " mph";
+let precipitation_unit_text = " in";
+
+let selected_day = 0;
+let selected_type = "temp";
 
 let data = await fetch_and_validate(
   `https://geocoding-api.open-meteo.com/v1/search` +
@@ -47,18 +64,35 @@ update_weather_data(city.latitude, city.longitude).then(() => {
 location_name = get_city_name(city);
 
 // EVENT LISTENERS
+
+// BUTTONS
+
 elements.temp_unit_button.addEventListener("click", () => {
   if (is_metric) {
     elements.temp_unit_button_text.textContent = "F";
     is_metric = false;
     wind_unit_text = " mph";
+    precipitation_unit_text = " in";
   } else {
     elements.temp_unit_button_text.textContent = "C";
     is_metric = true;
     wind_unit_text = " kmh";
+    precipitation_unit_text = " mm";
   }
   update_all_widgets();
 });
+
+elements.temp_graph_button.addEventListener("click", () => {
+  selected_type = "temp";
+  update_all_widgets();
+});
+
+elements.prec_graph_button.addEventListener("click", () => {
+  selected_type = "prec";
+  update_all_widgets();
+});
+
+// SEARCHBAR
 
 elements.searchbar.addEventListener("input", async (event) => {
   const input = event.target.value.trim();
@@ -150,9 +184,11 @@ function update_all_widgets() {
   if (is_metric) {
     update_main_widget(weather_data_metric.current);
     update_day_widgets(weather_data_metric.daily);
+    update_graph(weather_data_metric.hourly);
   } else {
     update_main_widget(weather_data_imperial.current);
     update_day_widgets(weather_data_imperial.daily);
+    update_graph(weather_data_imperial.hourly);
   }
 }
 
@@ -166,7 +202,7 @@ function update_main_widget(weather_data) {
     Math.round(Number(weather_data.apparent_temperature)) + "°";
 
   elements.main_precipitation.textContent =
-    Math.round(Number(weather_data.precipitation)) + "%";
+    Number(weather_data.precipitation).toFixed(1) + precipitation_unit_text;
 
   elements.main_humidity.textContent = weather_data.relative_humidity_2m + "%";
 
@@ -200,6 +236,33 @@ function update_day_widgets(weather_data) {
   elements.days[0].querySelector(".day-date").textContent = "Today";
 }
 
+function update_graph(weather_data) {
+  const data = get_hourly_data_from_day(
+    weather_data,
+    selected_day,
+    selected_type,
+  );
+
+  switch (selected_type) {
+    case "temp":
+      const max = Math.max(...data);
+      const min = Math.min(...data);
+      const dif = max - min + 10;
+      elements.bars.forEach((bar, index) => {
+        bar.style.height = `${Math.round(((data[index] - (min - 5)) / dif) * 100)}%`;
+      });
+
+      elements.legend_100.textContent = Math.round(max) + "°";
+      elements.legend_75.textContent =
+        Math.round((max - min) * 0.75 + min) + "°";
+      elements.legend_50.textContent =
+        Math.round((max - min) * 0.5 + min) + "°";
+      elements.legend_25.textContent =
+        Math.round((max - min) * 0.25 + min) + "°";
+      elements.legend_0.textContent = Math.round(Math.min(...data)) + "°";
+  }
+}
+
 // FETCH
 
 async function fetch_and_validate(url, signal) {
@@ -231,8 +294,13 @@ async function get_weather(lat, long) {
       `sunset,` +
       `weather_code,` +
       `temperature_2m_max,` +
-      `temperature_2m_min`,
+      `temperature_2m_min` +
+      `&hourly=` +
+      `temperature_2m,` +
+      `precipitation`,
   );
+
+  console.log(weather_data);
 
   return weather_data;
 }
@@ -375,7 +443,23 @@ function get_city_name(city) {
   }
 }
 
+// not really a transformer but whatever
+function get_hourly_data_from_day(weather_data, day, hourly_type) {
+  // No enums? f*** it, i'm using a string...
+  const start = day * 7;
+  const end = day * 7 + 24;
+  switch (hourly_type) {
+    case "temp":
+      return weather_data.temperature_2m.slice(start, end);
+      break;
+    case "prec":
+      return weather_data.precipitation.slice(start, end);
+      break;
+  }
+}
+
 function metric_to_imperial(weather_data) {
+  // CURRENT
   weather_data.current.temperature_2m = c_to_f(
     weather_data.current.temperature_2m,
   );
@@ -385,12 +469,24 @@ function metric_to_imperial(weather_data) {
   weather_data.current.wind_speed_10m = kmh_to_mph(
     weather_data.current.wind_speed_10m,
   );
+  weather_data.current.precipitation = mm_to_in(
+    weather_data.current.precipitation,
+  );
 
+  // DAILY
   weather_data.daily.temperature_2m_max =
     weather_data.daily.temperature_2m_max.map(c_to_f);
 
   weather_data.daily.temperature_2m_min =
     weather_data.daily.temperature_2m_min.map(c_to_f);
+
+  // JOURLY
+  weather_data.hourly.temperature_2m =
+    weather_data.hourly.temperature_2m.map(c_to_f);
+
+  weather_data.hourly.precipitation = mm_to_in(
+    weather_data.hourly.precipitation,
+  );
 
   return weather_data;
 }
@@ -401,4 +497,8 @@ function kmh_to_mph(kmh) {
 
 function c_to_f(c) {
   return c * (9 / 5) + 32;
+}
+
+function mm_to_in(mm) {
+  return mm / 25.4;
 }
