@@ -6,54 +6,31 @@
     <meta name="description" content="Only The Weather" />
     <title>Only Weather</title>
     <link rel="stylesheet" href="styles.css" />
-    <link
-      rel="icon"
-      type="image/svg+xml"
-      href="assets/icons/weather/partly-cloudy.svg"
-    />
+    <link rel="icon" type="image/svg+xml" href="assets/icons/weather/partly-cloudy.svg" />
   </head>
 
   <body>
     <div class="page-wrapper">
       <header>
         <div class="container">
-          <button
-            id="temp-unit-button"
-            class="button item glow-shadow"
-            type="button"
-          >
+          <button id="temp-unit-button" class="button item glow-shadow" type="button">
             <div class="button-text" id="temp-unit-button-text">F</div>
           </button>
-          <form
-            role="search"
-            class="container search-container"
-            id="searchbar"
-            autocomplete="off"
-          >
+          <form role="search" class="container search-container" id="searchbar" autocomplete="off">
             <input
               class="item glow-shadow"
               id="searchbox"
               type="search"
               placeholder="Search City..."
             />
-            <button
-              class="button item glow-shadow"
-              type="submit"
-              id="searchbox-submit-button"
-            >
+            <button class="button item glow-shadow" type="submit" id="searchbox-submit-button">
               <img class="icon" src="assets/icons/search.svg" alt="" />
             </button>
-            <div
-              class="search-results-wrapper card glow-shadow hide"
-              id="search-results-wrapper"
-            >
+            <div class="search-results-wrapper card glow-shadow hide" id="search-results-wrapper">
               <template id="loading-image-template">
                 <img class="loading-image" src="assets/images/loading.gif" />
               </template>
-              <template
-                class="search-result-template"
-                id="search-result-template"
-              >
+              <template class="search-result-template" id="search-result-template">
                 ><button type="button" class="search-result">
                   <span class="city-name"></span>
                 </button>
@@ -77,12 +54,7 @@
                 </div>
               </div>
             </div>
-            <img
-              class="emoji"
-              id="main-emoji"
-              src="assets/icons/unloaded.svg"
-              alt=""
-            />
+            <img class="emoji" id="main-emoji" src="assets/icons/unloaded.svg" alt="" />
             <div class="info-block">
               <div class="info-text" id="percipitation-info">
                 <div class="info-name">Percipitation</div>
@@ -100,16 +72,10 @@
           </div>
           <div class="card glow-shadow" id="graph-widget">
             <div class="graph-menu">
-              <button
-                class="graph-menu-button glow-shadow"
-                id="temperature-graph-menu-button"
-              >
+              <button class="graph-menu-button glow-shadow" id="temperature-graph-menu-button">
                 Temperature
               </button>
-              <button
-                class="graph-menu-button glow-shadow"
-                id="precipitation-graph-menu-button"
-              >
+              <button class="graph-menu-button glow-shadow" id="precipitation-graph-menu-button">
                 Precipitation
               </button>
             </div>

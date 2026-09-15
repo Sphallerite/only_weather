@@ -1,13 +1,21 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 :root {
-  --weather-grad-top: #609bb9;
+  --weather-grad-top: #386797;
   --subtle: color-mix(in srgb, var(--weather-grad-top) 50%, rgb(255, 255, 255));
+  --lighter: color-mix(in srgb, var(--subtle) 50%, rgb(255, 255, 255));
+  --lighter-light: color-mix(in srgb, var(--weather-grad-top) 25%, rgb(255, 255, 255));
+  --current-day-highlighted: color-mix(
+    in srgb,
+    var(--weather-grad-top) 25%,
+    rgba(255, 255, 255, 0.121)
+  );
   --weather-grad-bottom: #e3c19b;
 
   --bluey: #90c4d9;
 
   --black: #000000;
   --black-trans: #00000039;
+  --black-trans-light: #00000010;
   --black-trans-xdark: #0000005f;
   --trans-light: rgba(1, 1, 1, 0.075);
   --grey: #adadad72;
@@ -77,11 +85,7 @@ html {
   font-family: "Inter", sans-serif;
   font-weight: var(--medium);
   min-height: 100%;
-  background: linear-gradient(
-    to bottom,
-    var(--weather-grad-top),
-    var(--weather-grad-bottom)
-  );
+  background: linear-gradient(to bottom, var(--weather-grad-top), var(--weather-grad-bottom));
 }
 
 body {
@@ -101,6 +105,14 @@ body {
 
 .glow-shadow {
   box-shadow: 0px 0px 4px 1px var(--black-trans);
+}
+
+.current-time-highlighted {
+  background-color: var(--current-day-highlighted) !important;
+}
+
+.lighter {
+  background-color: var(--lighter) !important;
 }
 
 .container {
@@ -368,7 +380,7 @@ body {
 }
 
 .graph-menu-button {
-  background-color: transparent;
+  background-color: var(--black-trans-light);
   border: 0;
   border-radius: var(--radius-s);
   color: white;
@@ -388,6 +400,7 @@ body {
 }
 
 .bar {
+  position: relative;
   flex: 1 1 0;
   background-color: var(--subtle);
   height: 80%;

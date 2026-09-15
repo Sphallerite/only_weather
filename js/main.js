@@ -20,7 +20,7 @@ const elements = {
   loading_image_template: document.getElementById("loading-image-template"),
 
   bars: Array.from(document.querySelectorAll(".bar")),
-  bar_box_temp_label: document.getElementById("temp-label"),
+  bar_box_label: document.getElementById("temp-label"),
 
   temp_graph_button: document.getElementById("temperature-graph-menu-button"),
   prec_graph_button: document.getElementById("precipitation-graph-menu-button"),
@@ -41,14 +41,31 @@ const default_city = "Rancho Santa Margarita, California";
 // i.e. precipitation of 0.0 mm should be at 0% height, whereas the low
 // daily temp of 12 degrees should not scale to 0% bar height, and should
 // scale to some factor such as 10% bar height
-const TempSquishFactors = {
-  top: 0.1,
-  bottom: 0.1,
-};
-
-const PrecSquishFactors = {
-  top: 0.5,
-  bottom: 0.0,
+const GraphScales = {
+  metric: {
+    temp: {
+      min_difference: 2,
+      bottom_margin: 0.1,
+      top_margin: 0.1,
+    },
+    prec: {
+      min_difference: 4,
+      bottom_margin: 0.0,
+      top_margin: 0.1,
+    },
+  },
+  imperial: {
+    temp: {
+      min_difference: 10,
+      bottom_margin: 0.1,
+      top_margin: 0.1,
+    },
+    prec: {
+      min_difference: 0.4,
+      bottom_margin: 0.0,
+      top_margin: 0.1,
+    },
+  },
 };
 
 let SiteState = {
@@ -198,20 +215,26 @@ elements.searchbar.addEventListener("submit", (event) => {
 // GRAPH BARS
 
 elements.bars.forEach((bar, index) => {
-  bar.addEventListener("mouseenter", () => {
+  bar.addEventListener("pointerenter", () => {
     let weather_data = SiteState.display_metric
       ? WeatherData.metric.hourly
       : WeatherData.imperial.hourly;
 
-    elements.bar_box_temp_label.textContent =
-      get_hourly_data_from_day(weather_data, GraphData.day_selected, "temp")[index].toFixed(0) +
-      "°";
+    let GraphContext = get_graph_context(GraphData.type_selected);
 
-    elements.bar_box_temp_label.classList.remove("hide");
+    elements.bar_box_label.textContent =
+      clean_number(
+        get_hourly_data_from_day(weather_data, GraphData.day_selected, GraphData.type_selected)[
+          index
+        ].toFixed(GraphContext.round_to),
+      ) + GraphContext.unit_text;
+
+    elements.bar_box_label.classList.remove("hide");
+    bar.classList.add("lighter");
   });
 
-  bar.addEventListener("mouseleave", () => {
-    elements.bar_box_temp_label.classList.add("hide");
+  bar.addEventListener("pointerleave", () => {
+    bar.classList.remove("lighter");
   });
 });
 
@@ -238,17 +261,17 @@ function update_all_widgets() {
 function update_main_widget(weather_data) {
   elements.main_location.textContent = SiteState.current_location;
 
-  elements.main_temp.textContent = Number(weather_data.temperature_2m).toFixed(0) + "°";
+  elements.main_temp.textContent = weather_data.temperature_2m.toFixed(0) + "°";
 
-  elements.main_feels_temp.textContent = Number(weather_data.apparent_temperature).toFixed(0) + "°";
+  elements.main_feels_temp.textContent = weather_data.apparent_temperature.toFixed(0) + "°";
 
   elements.main_precipitation.textContent =
-    Number(weather_data.precipitation).toFixed(1) + SiteState.display_metric ? " mm" : " in";
+    Number(weather_data.precipitation).toFixed(1) + (SiteState.display_metric ? " mm" : " in");
 
   elements.main_humidity.textContent = weather_data.relative_humidity_2m + "%";
 
   elements.main_wind.textContent =
-    Number(weather_data.wind_speed_10m).toFixed(0) + SiteState.display_metric ? " kmh" : " mph";
+    Number(weather_data.wind_speed_10m).toFixed(0) + (SiteState.display_metric ? " kmh" : " mph");
 
   elements.main_emoji.src = weather_code_to_emoji(weather_data.weather_code, weather_data.is_day);
 }
@@ -283,21 +306,29 @@ function update_graph(weather_data) {
 
   const max = Math.max(...data);
   const min = Math.min(...data);
+  const dif = max - min;
 
-  const max_squished = max + max * Context.squish.top;
-  const min_squished = min - min * Context.squish.bottom;
-  const squished_dif = max_squished - min_squished + 0.001;
+  const graph_bottom = min - min * Context.scale.bottom_margin;
+  let graph_top = max + max * Context.scale.top_margin;
+  graph_top = graph_top < Context.scale.min_difference ? Context.scale.min_difference : graph_top;
+  const graph_height = graph_top - graph_bottom;
 
   elements.bars.forEach((bar, index) => {
-    const percent = ((data[index] - min_squished) / squished_dif) * 100;
-    bar.style.height = `${percent}%`;
+    const bar_height_percentage = ((data[index] - graph_bottom) / graph_height) * 100;
+    bar.style.height = `${bar_height_percentage}%`;
+
+    if (GraphData.day_selected == 0 && index <= new Date().getHours()) {
+      bar.classList.add("current-time-highlighted");
+    } else {
+      bar.classList.remove("current-time-highlighted");
+    }
   });
 
-  const percent_100 = clean_number(max_squished.toFixed(Context.round_to));
-  const percent_75 = clean_number((squished_dif * 0.75 + min_squished).toFixed(Context.round_to));
-  const percent_50 = clean_number((squished_dif * 0.5 + min_squished).toFixed(Context.round_to));
-  const percent_25 = clean_number((squished_dif * 0.25 + min_squished).toFixed(Context.round_to));
-  const percent_0 = clean_number(min_squished.toFixed(Context.round_to));
+  const percent_100 = clean_number(graph_top.toFixed(Context.round_to));
+  const percent_75 = clean_number((graph_height * 0.75 + graph_bottom).toFixed(Context.round_to));
+  const percent_50 = clean_number((graph_height * 0.5 + graph_bottom).toFixed(Context.round_to));
+  const percent_25 = clean_number((graph_height * 0.25 + graph_bottom).toFixed(Context.round_to));
+  const percent_0 = clean_number(graph_bottom.toFixed(Context.round_to));
 
   elements.legend_100.textContent = percent_100 + Context.unit_text;
   elements.legend_75.textContent = percent_75 + Context.unit_text;
@@ -522,14 +553,14 @@ function get_graph_context(type) {
   switch (type) {
     case "temp": {
       return {
-        squish: TempSquishFactors,
+        scale: SiteState.display_metric ? GraphScales.metric.temp : GraphScales.imperial.temp,
         unit_text: "°",
         round_to: 0,
       };
     }
     case "prec": {
       return {
-        squish: PrecSquishFactors,
+        scale: SiteState.display_metric ? GraphScales.metric.prec : GraphScales.imperial.prec,
         unit_text: SiteState.display_metric ? " mm" : " in",
         round_to: SiteState.display_metric ? 1 : 2,
       };
