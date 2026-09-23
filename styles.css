@@ -16,7 +16,7 @@
   --black: #000000;
   --black-trans: #00000039;
   --black-trans-light: #00000010;
-  --black-trans-xdark: #0000005f;
+  --black-trans-xdark: #00000036;
   --trans-light: rgba(1, 1, 1, 0.075);
   --grey: #adadad72;
   --grey-contrast: #353535;
@@ -400,10 +400,10 @@ body {
 }
 
 .bar {
-  position: relative;
+  --value: 0;
+
   flex: 1 1 0;
   background-color: var(--subtle);
-  height: 80%;
   border-radius: 2px;
   box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.14);
 
@@ -547,11 +547,11 @@ hr {
 }
 
 .day:hover {
-  scale: 0.975;
+  scale: 0.99;
 }
 
 .day:active {
-  scale: 0.95;
+  scale: 0.98;
 }
 
 .day-icon {

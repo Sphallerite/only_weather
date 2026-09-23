@@ -26,21 +26,14 @@ const elements = {
   prec_graph_button: document.getElementById("precipitation-graph-menu-button"),
 
   legend_100: document.getElementById("legend-text-100"),
-  legend_75: document.getElementById("legend-text-75"),
-  legend_50: document.getElementById("legend-text-50"),
-  legend_25: document.getElementById("legend-text-25"),
+  legend_66: document.getElementById("legend-text-66"),
+  legend_33: document.getElementById("legend-text-33"),
   legend_0: document.getElementById("legend-text-0"),
 };
 
 // CONSTANTS
 const default_city = "Rancho Santa Margarita, California";
 
-// These factors determine how much to scale graph bars from the top
-// and bottom of the graph. 0.0 and 1.0 means the lowest or highest value in
-// the group will be at 0% or 100% bar height respectivly.
-// i.e. precipitation of 0.0 mm should be at 0% height, whereas the low
-// daily temp of 12 degrees should not scale to 0% bar height, and should
-// scale to some factor such as 10% bar height
 const GraphScales = {
   metric: {
     temp: {
@@ -49,7 +42,7 @@ const GraphScales = {
       top_margin: 0.1,
     },
     prec: {
-      min_difference: 4,
+      min_difference: 3,
       bottom_margin: 0.0,
       top_margin: 0.1,
     },
@@ -61,22 +54,29 @@ const GraphScales = {
       top_margin: 0.1,
     },
     prec: {
-      min_difference: 0.4,
+      min_difference: 0.06,
       bottom_margin: 0.0,
       top_margin: 0.1,
     },
   },
 };
 
+const current_city = await get_city(default_city);
+
 let SiteState = {
   display_metric: false,
-  current_location: default_city,
+  current_location: get_city_name(current_city),
 };
 
-let WeatherData = {
-  metric: null,
-  imperial: null,
-};
+let WeatherData = await (async () => {
+  const metric = await get_weather(current_city.latitude, current_city.longitude);
+  const imperial = metric_to_imperial(metric);
+
+  return {
+    metric: metric,
+    imperial: imperial,
+  };
+})();
 
 let SearchData = {
   controller: null,
@@ -88,20 +88,7 @@ let GraphData = {
   type_selected: "temp",
 };
 
-let data = await fetch_and_validate(
-  `https://geocoding-api.open-meteo.com/v1/search` +
-    `?name=${default_city}` +
-    `&count=1` +
-    `&language=en` +
-    `&format=json`,
-);
-
-const city = data.results[0];
-update_weather_data(city.latitude, city.longitude).then(() => {
-  update_all_widgets();
-});
-
-SiteState.current_location = get_city_name(city);
+update_all_widgets();
 
 // EVENT LISTENERS
 
@@ -220,31 +207,34 @@ elements.bars.forEach((bar, index) => {
       ? WeatherData.metric.hourly
       : WeatherData.imperial.hourly;
 
-    let GraphContext = get_graph_context(GraphData.type_selected);
+    const GraphContext = get_graph_context(GraphData.type_selected);
 
-    elements.bar_box_label.textContent =
+    let value = (elements.bar_box_label.textContent =
       clean_number(
         get_hourly_data_from_day(weather_data, GraphData.day_selected, GraphData.type_selected)[
           index
         ].toFixed(GraphContext.round_to),
-      ) + GraphContext.unit_text;
+      ) + GraphContext.unit_text);
 
     elements.bar_box_label.classList.remove("hide");
     bar.classList.add("lighter");
   });
 
   bar.addEventListener("pointerleave", () => {
+    elements.bar_box_label.classList.add("hide");
     bar.classList.remove("lighter");
   });
 });
 
-// DOM MANIPULATION
+// FETCH
 
 async function update_weather_data(lat, long) {
   WeatherData.metric = await get_weather(lat, long);
 
   WeatherData.imperial = metric_to_imperial(structuredClone(WeatherData.metric));
 }
+
+// DOM MANIPULATION
 
 function update_all_widgets() {
   if (SiteState.display_metric) {
@@ -314,10 +304,11 @@ function update_graph(weather_data) {
   const graph_height = graph_top - graph_bottom;
 
   elements.bars.forEach((bar, index) => {
-    const bar_height_percentage = ((data[index] - graph_bottom) / graph_height) * 100;
+    const bar_height_percentage =
+      ((data[index].toFixed(Context.round_to) - graph_bottom) / graph_height) * 100;
     bar.style.height = `${bar_height_percentage}%`;
 
-    if (GraphData.day_selected == 0 && index <= new Date().getHours()) {
+    if (GraphData.day_selected == 0 && index < new Date().getHours()) {
       bar.classList.add("current-time-highlighted");
     } else {
       bar.classList.remove("current-time-highlighted");
@@ -325,15 +316,13 @@ function update_graph(weather_data) {
   });
 
   const percent_100 = clean_number(graph_top.toFixed(Context.round_to));
-  const percent_75 = clean_number((graph_height * 0.75 + graph_bottom).toFixed(Context.round_to));
-  const percent_50 = clean_number((graph_height * 0.5 + graph_bottom).toFixed(Context.round_to));
-  const percent_25 = clean_number((graph_height * 0.25 + graph_bottom).toFixed(Context.round_to));
+  const percent_66 = clean_number((graph_height * 0.666 + graph_bottom).toFixed(Context.round_to));
+  const percent_33 = clean_number((graph_height * 0.333 + graph_bottom).toFixed(Context.round_to));
   const percent_0 = clean_number(graph_bottom.toFixed(Context.round_to));
 
   elements.legend_100.textContent = percent_100 + Context.unit_text;
-  elements.legend_75.textContent = percent_75 + Context.unit_text;
-  elements.legend_50.textContent = percent_50 + Context.unit_text;
-  elements.legend_25.textContent = percent_25 + Context.unit_text;
+  elements.legend_66.textContent = percent_66 + Context.unit_text;
+  elements.legend_33.textContent = percent_33 + Context.unit_text;
   elements.legend_0.textContent = percent_0 + Context.unit_text;
 }
 
@@ -375,6 +364,23 @@ async function get_weather(lat, long) {
   );
 
   return weather_data;
+}
+
+async function get_cities(city) {
+  let cities = await fetch_and_validate(
+    `https://geocoding-api.open-meteo.com/v1/search` +
+      `?name=${encodeURIComponent(city)}` +
+      `&count=1` +
+      `&language=en` +
+      `&format=json`,
+  );
+
+  return cities;
+}
+
+async function get_city(city) {
+  const result = await get_cities(city);
+  return result.results[0];
 }
 
 // TRANFORMERS
@@ -530,6 +536,8 @@ function get_hourly_data_from_day(weather_data, day, hourly_type) {
 }
 
 function metric_to_imperial(weather_data) {
+  weather_data = structuredClone(weather_data);
+
   // CURRENT
   weather_data.current.temperature_2m = c_to_f(weather_data.current.temperature_2m);
   weather_data.current.apparent_temperature = c_to_f(weather_data.current.apparent_temperature);
@@ -541,7 +549,7 @@ function metric_to_imperial(weather_data) {
 
   weather_data.daily.temperature_2m_min = weather_data.daily.temperature_2m_min.map(c_to_f);
 
-  // JOURLY
+  // HOURLY
   weather_data.hourly.temperature_2m = weather_data.hourly.temperature_2m.map(c_to_f);
 
   weather_data.hourly.precipitation = weather_data.hourly.precipitation.map(mm_to_in);
